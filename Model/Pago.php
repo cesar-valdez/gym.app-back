@@ -70,11 +70,17 @@ function addPagos() {
 		$stmt->execute();
 		$inst->id_pago = $db->lastInsertId();
 		$db = null;
-		echo json_encode($inst);
-	} catch(PDOException $e) {
-		$answer = array( 'error' =>  $e->getMessage());
+		//validar mensaje de ok y error
+		$answer = array('estatus'=>'ok', 'msj'=> 'pago agrgegado exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1451){
+				$answer = array( 'estatus'=>'error','msj' =>  'No es posible agregar este pago' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
+		}
 		echo json_encode($answer);
-	}
 }
 
 
@@ -91,11 +97,17 @@ function putPagos() {
 
 		$stmt->execute();
 		$db = null;
-		echo json_encode($req);
-	} catch(PDOException $e) {
-		$answer = array( 'error' =>  $e->getMessage());
+		//validar mensaje de ok y error
+		$answer = array('estatus'=>'ok', 'msj'=> 'pago modificado exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1451){
+				$answer = array( 'estatus'=>'error','msj' =>  'No es posible modificar este pago' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
+		}
 		echo json_encode($answer);
-	}
 }
 
 
@@ -114,12 +126,17 @@ function deletePagos(){
 		$stmt->bindParam("id_pago", $pac->id_pago);
 		$stmt->execute();
 		$db = null;
-		echo json_encode($pac);
-	} 
-	catch(PDOException $e) {
-		$answer = array( 'error' =>  $e->getMessage());
+		//validar mensaje de ok y error
+		$answer = array('estatus'=>'ok', 'msj'=> 'pago eliminado exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1451){
+				$answer = array( 'estatus'=>'error','msj' =>  'No es posible eliminar este pago' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
+		}
 		echo json_encode($answer);
-	}
 }
 
 

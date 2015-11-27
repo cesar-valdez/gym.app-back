@@ -42,9 +42,15 @@ function addClase() {
 			$db = null;
 			$success = array('estatus' =>  'success', 'dia'=>$inst->dia, 'hora'=> $inst->hora);
 			array_push($answer, $success);
+			$answer = array('estatus'=>'ok', 'msj'=> 'clase(s) agregada(s) exitosamente');
 		} catch(PDOException $e) {
+			if($e->errorInfo[1] == 1062){
 			$err = array('estatus'=>'error','dia'=>$inst->dia, 'hora'=> $inst->hora);
 			array_push($answer, $err);
+				$answer = array( 'estatus'=>'error','msj' =>  'ya existe una clase con la misma hora y dia' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
 		}
 	}
 

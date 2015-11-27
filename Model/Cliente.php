@@ -168,7 +168,34 @@ function deleteClientes(){
 		} 
 		catch(PDOException $e) {
 			if($e->errorInfo[1] == 1451){
-				$answer = array( 'estatus'=>'error','msj' =>  'No es posible eliminar el usuario' );
+				$answer = array( 'estatus'=>'error','msj' =>  'No es posible eliminar el usuario, el usuario esta en una clase o tiene un pago por hacer' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
+		}
+		echo json_encode($answer);
+}
+
+function deleteUsuarios(){
+	$request = \Slim\Slim::getInstance()->request();
+	$pac = json_decode($request->getBody());
+	$sql_query = "DELETE 
+					FROM 
+						usuarios
+					WHERE 
+						correo = '$pac->correo'";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql_query);
+		$stmt->bindParam("correo", $pac->correo);
+		$stmt->execute();
+		$db = null;
+		//validar mensaje de ok y error
+		$answer = array('estatus'=>'ok', 'msj'=> ' usuario eliminado exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1451){
+				$answer = array( 'estatus'=>'error','msj' =>  'No es posible eliminar el usuario, el usuario esta en una clase o tiene un pago por hacer' );
 			} else {
 				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
 			}

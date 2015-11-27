@@ -82,7 +82,7 @@ $app->get('/getClientes','getClientes');
 $app->get('/getCliente/:no_reg','getCliente'); 
 $app->put('/putClientes','putClientes');
 $app->delete('/deleteClientes','deleteClientes');
-
+$app->delete('/deleteUsuarios','deleteUsuarios');
 
 $app->post('/addInstructores','addInstructor');
 $app->get('/getInstructores','getInstructores');
@@ -97,7 +97,7 @@ $app->delete('/deleteClases','deleteClases');
 
 $app->post('/AgendarClase','AgendarClase');
 $app->get('/getAgendarClase/:hora/:dia','getAgendarClase'); 
-
+$app->delete('/EliminarClienteAgendado','EliminarClienteAgendado');
 
 
 $app->get('/getBanner','getBanner');

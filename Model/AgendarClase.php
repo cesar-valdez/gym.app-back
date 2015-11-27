@@ -18,16 +18,21 @@ function AgendarClase() {
 			$stmt->execute();
 			//$inst->id_agendar = $db->lastInsertId();
 			$db = null;
-			echo json_encode($inst);
-		} catch(PDOException $e) {
-			$answer = array( 'error' =>  $e->getMessage());
-			echo json_encode($answer);
+			//validar mensaje de ok y error
+		$answer = array('estatus'=>'ok', 'msj'=> 'su clase se agendo exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1062){
+				$answer = array( 'estatus'=>'error','msj' =>  'ya habias agendado esta clase' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
 		}
+		echo json_encode($answer);
 }
 
 function getAgendarClase($hora, $dia) { 
-	$sql_query = "SELECT agendarclase.id_agendar as agendarclaseIDAgendar,
-						 agendarclase.horaAg as agendarclaseHora,
+	$sql_query = "SELECT agendarclase.horaAg as agendarclaseHora,
 						 agendarclase.diaAg as agendarclaseDia,
 						 clientes.no_registro as ClientesRegistro,
 						 clientes.nombre as ClientesNombre,
@@ -51,6 +56,38 @@ function getAgendarClase($hora, $dia) {
 		$answer = array( 'error' =>  $e->getMessage());
 		echo json_encode($answer);
 	}
+}
+
+function EliminarClienteAgendado() { 
+	$request = \Slim\Slim::getInstance()->request();
+	$pac = json_decode($request->getBody());
+	$sql_query = "DELETE 
+					FROM 
+						agendarClase
+					WHERE 
+						no_registro = '$pac->no_registro' AND horaAg = '$pac->horaAg' AND diaAg = '$pac->diaAg'";
+	try {
+		$db = getConnection();
+		$stmt = $db->prepare($sql_query);
+		$stmt->bindParam("no_registro", $pac->no_registro);
+		$stmt->execute();
+		$db = null;
+		/*$answer = array('estatus'=>'ok', 'msj'=> 'Cita eliminada satisfactoriamente');
+	} 
+	catch(PDOException $e) {
+		$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+	}
+	echo json_encode($answer);*/
+		$answer = array('estatus'=>'ok', 'msj'=> 'el cliente agendado se elimino exitosamente');
+		} 
+		catch(PDOException $e) {
+			if($e->errorInfo[1] == 1451){
+				$answer = array( 'estatus'=>'error','msj' =>  'No puedes eliminar a este cliente.' );
+			} else {
+				$answer = array( 'estatus'=>'error','msj' =>  $e->getMessage());
+			}
+		}
+		echo json_encode($answer);
 }
 
 ?>
